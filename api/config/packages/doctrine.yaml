@@ -1,7 +1,8 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
-
+        options:
+            search_path: 'public'
         # IMPORTANT: You MUST configure your server version,
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '16'
@@ -52,3 +53,11 @@ when@prod:
                     adapter: cache.app
                 doctrine.system_cache_pool:
                     adapter: cache.system
+
+when@dev:
+    doctrine:
+        dbal:
+            # active le logging des requêtes en environnement de développement
+            logging: true
+            # collecte les backtraces si kernel.debug = true (utile pour retrouver l'emplacement)
+            profiling_collect_backtrace: true

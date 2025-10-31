@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Dog;
+use App\Entity\Breed;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -10,31 +11,48 @@ class DogFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $dogs = [
-            ['name' => 'Rex', 'breed' => 'German Shepherd', 'birth' => '2018-03-14'],
-            ['name' => 'Bella', 'breed' => 'Labrador Retriever', 'birth' => '2020-07-22'],
-            ['name' => 'Charlie', 'breed' => 'Beagle', 'birth' => '2019-11-05'],
-            ['name' => 'Luna', 'breed' => 'Border Collie', 'birth' => '2021-01-30'],
-            ['name' => 'Max', 'breed' => 'Golden Retriever', 'birth' => '2017-05-10'],
-            ['name' => 'Milo', 'breed' => 'French Bulldog', 'birth' => '2022-02-18'],
-            ['name' => 'Nala', 'breed' => 'Australian Shepherd', 'birth' => '2019-08-09'],
-            ['name' => 'Rocky', 'breed' => 'Boxer', 'birth' => '2016-12-01'],
-            ['name' => 'Ruby', 'breed' => 'Cocker Spaniel', 'birth' => '2020-10-17'],
-            ['name' => 'Simba', 'breed' => 'Shiba Inu', 'birth' => '2021-06-25'],
+        // Number of dogs to generate. Change this value to create a different amount,
+        // or set the env var DOG_FIXTURES_COUNT to override it when running fixtures.
+        $nbDogs = (int) ($_ENV['DOG_FIXTURES_COUNT'] ?? 1000);
+        $nbDogs = (int) 1000;
+
+        // 30 example dog names (you can replace/translate them as needed)
+        $names = [
+            'Rex','Bella','Charlie','Luna','Max','Milo','Nala','Rocky','Ruby','Simba',
+            'Daisy','Buddy','Lucy','Cooper','Lola','Bailey','Sadie','Toby','Zoe','Oliver',
+            'Maggie','Oscar','Sophie','Bentley','Harley','Lilly','Leo','Poppy','Jack','Mimi'
         ];
 
-        foreach ($dogs as $i => $data) {
+        $breeds = $manager->getRepository(Breed::class)->findAll();
+
+
+        // Timestamp range: from now minus 10 years to now
+        $endTs = (new \DateTimeImmutable())->getTimestamp();
+        $startTs = (new \DateTimeImmutable())->modify('-10 years')->getTimestamp();
+
+        for ($i = 0; $i < $nbDogs; $i++) {
+            $name = $names[array_rand($names)];
+
+            // random timestamp between start and end
+            $randTs = random_int($startTs, $endTs);
+            $birthDate = (new \DateTimeImmutable())->setTimestamp($randTs)->setTime(0, 0);
+
+            // Get a random breed from the breeds created in BreedFixtures
+
+            $breed = $breeds[array_rand($breeds)];
+
             $dog = (new Dog())
-                ->setName($data['name'])
-                ->setBreed($data['breed'])
-                ->setBirthDate(new \DateTimeImmutable($data['birth']));
+                ->setName($name)
+                ->setBreed($breed)
+                ->setBirthDate($birthDate);
 
             $manager->persist($dog);
 
-            // Optional references if needed by other fixtures later
-            $this->addReference('dog_'.($i+1), $dog);
+            // Add a reference that other fixtures can use if needed
+            $this->addReference('dog_'.($i + 1), $dog);
         }
-
         $manager->flush();
     }
+
+
 }

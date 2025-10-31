@@ -7,6 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(mercure: true)]
+
+
+
 #[ORM\Entity]
 class Dog
 {
@@ -25,9 +28,10 @@ class Dog
     /**
      * Race du chien
      */
-    #[ORM\Column]
-    #[Assert\NotBlank]
-    private string $breed = '';
+    #[ORM\ManyToOne(targetEntity: Breed::class, inversedBy: 'dogs')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
+    private ?Breed $breed = null;
 
     /**
      * Date de naissance du chien
@@ -53,12 +57,12 @@ class Dog
         return $this;
     }
 
-    public function getBreed(): string
+    public function getBreed(): ?Breed
     {
         return $this->breed;
     }
 
-    public function setBreed(string $breed): self
+    public function setBreed(?Breed $breed): self
     {
         $this->breed = $breed;
         return $this;

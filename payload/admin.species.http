@@ -11,26 +11,20 @@ Content-Type: application/json
 }
 
 ################################
-
-
-# @name getPets
-@token = {{login.response.body.$.token}}
-GET {{baseUrl}}/api/pets
-Authorization: Bearer {{token}}
-Accept: application/json
-
-################################
-
-# @name getHarley
-@token = {{login.response.body.$.token}}
-GET {{baseUrl}}/api/pets?name=Harley
-Authorization: Bearer {{token}}
-Accept: application/json
-
-################################
-
 # @name getSpecies
 @token = {{login.response.body.$.token}}
-GET {{baseUrl}}/api/pets?species.name=Dog
+GET {{baseUrl}}/api/species
 Authorization: Bearer {{token}}
-Accept: application/json
+Accept: application/json    
+
+################################
+# @name getSpecies
+@token = {{login.response.body.$.token}}
+POST {{baseUrl}}/api/species
+Authorization: Bearer {{token}}
+Accept: application/ld+json
+Content-Type: application/ld+json
+
+{
+    "name": "Dog2"
+}

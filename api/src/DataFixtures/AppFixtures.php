@@ -8,6 +8,7 @@ use App\Entity\Species;
 use App\Entity\Breed;
 use App\Entity\Pet;
 use App\Entity\Owner;
+use App\Entity\OwnerPet;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 
 class AppFixtures extends Fixture implements FixtureGroupInterface
@@ -16,10 +17,16 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
     {
 
         $owner = (new Owner())->setEmail('sebastien@guary.org')
-        ->setPassword('$2y$13$xIcxj0nJj3BozK/tInfEmO8M4xdA8uMA8ysAQoqKRryjquz7Gd3G6');
+        ->setPassword('$2y$13$xIcxj0nJj3BozK/tInfEmO8M4xdA8uMA8ysAQoqKRryjquz7Gd3G6')
+        ->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
 
         $manager->persist($owner);
 
+        $owner = (new Owner())->setEmail('another@guary.org')
+        ->setPassword('$2y$13$xIcxj0nJj3BozK/tInfEmO8M4xdA8uMA8ysAQoqKRryjquz7Gd3G6')
+        ->setRoles(['ROLE_USER']);
+
+        $manager->persist($owner);
 
 
         $species = ['Dog','Cat','Bird','Fish','Reptile','Rodent'];
@@ -108,8 +115,12 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             $this->addReference('pet_'.($i + 1), $pet);
         }
 
+        $ownerPet = (new OwnerPet())
+            ->setOwner($owner)
+            ->setPet($pet)
+        ;
 
-
+        $manager->persist($ownerPet);
         $manager->flush();
 
 

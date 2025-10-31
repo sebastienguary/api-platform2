@@ -7,11 +7,22 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 
-#[ApiResource(mercure: true)]
-
-
-
+#[ApiResource(
+    operations: [
+        new GetCollection(security: 'is_granted("ROLE_USER")'),
+        // Si tu exposes l’item Species, garde le même niveau de sécurité
+        new Get(security: 'is_granted("ROLE_ADMIN")'),
+        new Post(security: 'is_granted("ROLE_ADMIN")'),
+        new Patch(security: 'is_granted("ROLE_ADMIN")'),
+        new Delete(security: 'is_granted("ROLE_ADMIN")'),
+    ]
+)]
 #[ORM\Entity]
 class Species
 {
@@ -20,61 +31,20 @@ class Species
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     private ?int $id = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    /**
-     * Nom de l'espèce
-     */
-    #[ORM\Column]
+    #[ORM\Column(length: 180)]
     #[Assert\NotBlank]
     private string $name = '';
 
-    /**
-     * Animaux de cette espèce
-     *
-     * @var Collection<int, Pet>
-     */
-    #[ORM\OneToMany(mappedBy: 'specie', targetEntity: Pet::class, orphanRemoval: false)]
-    private Collection $pets;
 
     public function __construct()
     {
         $this->pets = new ArrayCollection();
     }
 
-    /**
-     * @return Collection<int, Pet>
-     */
-    public function getPets(): Collection
+    public function getId(): ?int
     {
-        return $this->pets;
+        return $this->id;
     }
-
-    public function addPet(Pet $pet): self
-    {
-        if (!$this->pets->contains($pet)) {
-            $this->pets->add($pet);
-            $pet->setSpecie($this);
-        }
-
-        return $this;
-    }
-
-    public function removePet(Pet $pet): self
-    {
-        if ($this->pets->removeElement($pet)) {
-            // set the owning side to null (unless already changed)
-            if ($pet->getSpecie() === $this) {
-                $pet->setSpecie(null);
-            }
-        }
-
-        return $this;
-    }
-
 
     public function getName(): string
     {
@@ -83,7 +53,11 @@ class Species
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

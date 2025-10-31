@@ -14,7 +14,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 #[ApiResource(mercure: true)]
 #[ApiFilter(SearchFilter::class, properties: [
     'name' => 'exact',
-    'species.name' => 'exact'
+    'species.na' => 'exact'
 ])]
 #[ORM\Entity]
 class Pet

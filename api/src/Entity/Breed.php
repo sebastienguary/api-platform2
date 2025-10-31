@@ -7,9 +7,22 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 
-#[ApiResource(mercure: true)]
-
+#[ApiResource(
+    operations: [
+        new GetCollection(security: 'is_granted("ROLE_USER")'),
+        new Get(security: 'is_granted("ROLE_USER")'),
+  
+        new Post(security: 'is_granted("ROLE_USER")', processor: App\State\PetSetOwnerProcessor::class),
+        new Patch(security: 'object.getOwner() == user or is_granted("ROLE_ADMIN")'),
+        new Delete(security: 'object.getOwner() == user or is_granted("ROLE_ADMIN")'),
+    ]
+)]
 
 
 #[ORM\Entity]
@@ -46,11 +59,11 @@ class Breed
     /**
      * Espèce de l'animal
      */
-    
 
-#[ORM\ManyToOne(targetEntity: Species::class, inversedBy: 'breeds')]
-#[ORM\JoinColumn(name: 'id_species', referencedColumnName: 'id_species', nullable: false, onDelete: 'RESTRICT')]
-private Species $species;
+
+    #[ORM\ManyToOne(targetEntity: Species::class, inversedBy: 'breeds')]
+    #[ORM\JoinColumn(name: 'id_species', referencedColumnName: 'id_species', nullable: false, onDelete: 'RESTRICT')]
+    private Species $species;
 
     public function __construct()
     {

@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
+#use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ApiResource]
+##[ApiResource]
 #[ORM\Entity]
 #[ORM\Table(name: "owner", schema: "public")]
+
 
 class Owner implements UserInterface, PasswordAuthenticatedUserInterface
 {

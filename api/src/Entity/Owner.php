@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
@@ -8,9 +9,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ApiResource]
 #[ORM\Entity]
-#[ORM\Table(name: "user", schema: "public")]
+#[ORM\Table(name: "owner", schema: "public")]
 
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class Owner implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -15,8 +15,14 @@ class Owner implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: 'id_owner', type: 'integer')]
+
     private ?int $id = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     #[ORM\Column(unique: true)]
     private string $email;

@@ -13,13 +13,11 @@ use Doctrine\Common\Collections\Collection;
 
 
 #[ORM\Entity]
-class Breed
+class Species
 {
     #[ORM\Id]
-    #[ORM\Column(name: 'id_breed', type: 'integer')]
+    #[ORM\Column(name: 'id_species', type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
-
-
     private ?int $id = null;
 
     public function getId(): ?int
@@ -28,34 +26,23 @@ class Breed
     }
 
     /**
-     * Nom de la race
+     * Nom de l'espèce
      */
     #[ORM\Column]
     #[Assert\NotBlank]
     private string $name = '';
 
     /**
-     * Animaux de cette race
+     * Animaux de cette espèce
      *
      * @var Collection<int, Pet>
      */
-    #[ORM\OneToMany(mappedBy: 'breed', targetEntity: Pet::class, orphanRemoval: false)]
+    #[ORM\OneToMany(mappedBy: 'specie', targetEntity: Pet::class, orphanRemoval: false)]
     private Collection $pets;
-
-
-    /**
-     * Espèce de l'animal
-     */
-    
-
-#[ORM\ManyToOne(targetEntity: Species::class, inversedBy: 'breeds')]
-#[ORM\JoinColumn(name: 'id_species', referencedColumnName: 'id_species', nullable: false, onDelete: 'RESTRICT')]
-private Species $species;
 
     public function __construct()
     {
         $this->pets = new ArrayCollection();
-
     }
 
     /**
@@ -70,7 +57,7 @@ private Species $species;
     {
         if (!$this->pets->contains($pet)) {
             $this->pets->add($pet);
-            $pet->setBreed($this);
+            $pet->setSpecie($this);
         }
 
         return $this;
@@ -80,24 +67,14 @@ private Species $species;
     {
         if ($this->pets->removeElement($pet)) {
             // set the owning side to null (unless already changed)
-            if ($pet->getBreed() === $this) {
-                $pet->setBreed(null);
+            if ($pet->getSpecie() === $this) {
+                $pet->setSpecie(null);
             }
         }
 
         return $this;
     }
 
-    public function getSpecies(): ?Species
-    {
-        return $this->species;
-    }
-
-    public function setSpecies(?Species $species): self
-    {
-        $this->species = $species;
-        return $this;
-    }
 
     public function getName(): string
     {

@@ -2,19 +2,19 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Dog;
+use App\Entity\Pet;
 use App\Entity\Breed;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class DogFixtures extends Fixture
+class PetFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
         // Number of dogs to generate. Change this value to create a different amount,
         // or set the env var DOG_FIXTURES_COUNT to override it when running fixtures.
         $nbDogs = (int) ($_ENV['DOG_FIXTURES_COUNT'] ?? 1000);
-        $nbDogs = (int) 1000;
+        $nbPets = (int) 1000;
 
         // 30 example dog names (you can replace/translate them as needed)
         $names = [
@@ -30,7 +30,7 @@ class DogFixtures extends Fixture
         $endTs = (new \DateTimeImmutable())->getTimestamp();
         $startTs = (new \DateTimeImmutable())->modify('-10 years')->getTimestamp();
 
-        for ($i = 0; $i < $nbDogs; $i++) {
+        for ($i = 0; $i < $nbPets; $i++) {
             $name = $names[array_rand($names)];
 
             // random timestamp between start and end
@@ -41,15 +41,15 @@ class DogFixtures extends Fixture
 
             $breed = $breeds[array_rand($breeds)];
 
-            $dog = (new Dog())
+            $pet = (new Pet())
                 ->setName($name)
                 ->setBreed($breed)
                 ->setBirthDate($birthDate);
 
-            $manager->persist($dog);
+            $manager->persist($pet);
 
             // Add a reference that other fixtures can use if needed
-            $this->addReference('dog_'.($i + 1), $dog);
+            $this->addReference('pet_'.($i + 1), $pet);
         }
         $manager->flush();
     }

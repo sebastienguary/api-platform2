@@ -13,8 +13,24 @@ Content-Type: application/json
 ################################
 
 
-# @name getDogs
+# @name getPets
 @token = {{login.response.body.$.token}}
-GET {{baseUrl}}/api/dogs
+GET {{baseUrl}}/api/pets
+Authorization: Bearer {{token}}
+Accept: application/json
+
+################################
+
+# @name getHarley
+@token = {{login.response.body.$.token}}
+GET {{baseUrl}}/api/pets?name=Harley
+Authorization: Bearer {{token}}
+Accept: application/json
+
+################################
+
+# @name getSpecies
+@token = {{login.response.body.$.token}}
+GET {{baseUrl}}/api/pets?species.name=Dog
 Authorization: Bearer {{token}}
 Accept: application/json

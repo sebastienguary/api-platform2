@@ -5,18 +5,29 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+
+
+
 
 #[ApiResource(mercure: true)]
-
-
-
+#[ApiFilter(SearchFilter::class, properties: [
+    'name' => 'exact',
+    'species.name' => 'exact'
+])]
 #[ORM\Entity]
-class Dog
+class Pet
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: 'id_pet', type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     private ?int $id = null;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     /**
      * Nom du chien
@@ -26,12 +37,22 @@ class Dog
     private string $name = '';
 
     /**
-     * Race du chien
+     * Race de l'animal
      */
-    #[ORM\ManyToOne(targetEntity: Breed::class, inversedBy: 'dogs')]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull]
-    private ?Breed $breed = null;
+
+    #[ORM\ManyToOne(targetEntity: Breed::class, inversedBy: 'breeds')]
+    #[ORM\JoinColumn(name: 'id_breed', referencedColumnName: 'id_breed', nullable: false, onDelete: 'RESTRICT')]
+    private Breed $breed;
+
+    /**
+     * Espèce de l'animal
+     */
+
+
+    #[ORM\ManyToOne(targetEntity: Species::class, inversedBy: 'breeds')]
+    #[ORM\JoinColumn(name: 'id_species', referencedColumnName: 'id_species', nullable: false, onDelete: 'RESTRICT')]
+    private Species $species;
+
 
     /**
      * Date de naissance du chien
@@ -41,10 +62,6 @@ class Dog
     #[Assert\LessThanOrEqual('today')]
     private ?\DateTimeImmutable $birthDate = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getName(): string
     {
@@ -68,6 +85,17 @@ class Dog
         return $this;
     }
 
+   public function setSpecies(?Species $species): self
+    {
+        $this->species = $species;
+        return $this;
+    }
+
+    public function getSpecies(): ?Species
+    {
+        return $this->species;
+    }
+
     public function getBirthDate(): ?\DateTimeImmutable
     {
         return $this->birthDate;
@@ -78,4 +106,6 @@ class Dog
         $this->birthDate = $birthDate;
         return $this;
     }
+
+
 }
